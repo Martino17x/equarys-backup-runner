@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
-# Instalar Supabase CLI
-RUN npm install -g supabase@latest
+# Instalar Supabase CLI (método oficial)
+RUN npm install supabase@latest
 
 # Crear directorio para backups
 RUN mkdir -p /backups
