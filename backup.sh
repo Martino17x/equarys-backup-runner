@@ -8,7 +8,7 @@ RETENTION_DAYS=30
 SUPABASE_PROJECT_REF="dzzyhscbuatnikcfybdl"
 SUPABASE_ACCESS_TOKEN="${SUPABASE_ACCESS_TOKEN:-}"
 
-# Verificar credenciales
+# Verificar credenciales (usar Project API Key, NO service_role)
 if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
     echo "ERROR: SUPABASE_ACCESS_TOKEN no está configurado"
     exit 1
