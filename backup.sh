@@ -6,12 +6,11 @@ SCHEMA_DIR="$BACKUP_DIR/schema"
 DATA_DIR="$BACKUP_DIR/data"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RETENTION_DAYS=30
-SUPABASE_PROJECT_REF="dzzyhscbuatnikcfybdl"
-SUPABASE_ACCESS_TOKEN="${SUPABASE_ACCESS_TOKEN:-}"
+SUPABASE_DB_URL="${SUPABASE_DB_URL:-}"
 
-# Verificar credenciales (service_role via environment variable)
-if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
-    echo "ERROR: SUPABASE_ACCESS_TOKEN no está configurado"
+# Verificar URL de conexión de base de datos
+if [ -z "$SUPABASE_DB_URL" ]; then
+    echo "ERROR: SUPABASE_DB_URL no está configurado"
     exit 1
 fi
 
@@ -21,7 +20,7 @@ mkdir -p "$DATA_DIR"
 
 # Backup de schema
 SCHEMA_FILE="$SCHEMA_DIR/equarys_schema_${TIMESTAMP}.sql"
-supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --schema-only --file "$SCHEMA_FILE"
+pg_dump "$SUPABASE_DB_URL" --schema-only --file "$SCHEMA_FILE"
 
 if [ -f "$SCHEMA_FILE" ]; then
     echo "Backup de schema completado: $SCHEMA_FILE"
@@ -35,7 +34,7 @@ fi
 
 # Backup de datos
 DATA_FILE="$DATA_DIR/equarys_data_${TIMESTAMP}.sql"
-supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --data-only --file "$DATA_FILE"
+pg_dump "$SUPABASE_DB_URL" --data-only --file "$DATA_FILE"
 
 if [ -f "$DATA_FILE" ]; then
     echo "Backup de datos completado: $DATA_FILE"
