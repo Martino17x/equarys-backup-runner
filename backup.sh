@@ -21,7 +21,7 @@ mkdir -p "$DATA_DIR"
 
 # Backup de schema
 SCHEMA_FILE="$SCHEMA_DIR/equarys_schema_${TIMESTAMP}.sql"
-./node_modules/.bin/supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --schema-only --file "$SCHEMA_FILE"
+supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --schema-only --file "$SCHEMA_FILE"
 
 if [ -f "$SCHEMA_FILE" ]; then
     echo "Backup de schema completado: $SCHEMA_FILE"
@@ -35,7 +35,7 @@ fi
 
 # Backup de datos
 DATA_FILE="$DATA_DIR/equarys_data_${TIMESTAMP}.sql"
-./node_modules/.bin/supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --data-only --file "$DATA_FILE"
+supabase db dump --project-ref "$SUPABASE_PROJECT_REF" --data-only --file "$DATA_FILE"
 
 if [ -f "$DATA_FILE" ]; then
     echo "Backup de datos completado: $DATA_FILE"

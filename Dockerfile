@@ -1,7 +1,10 @@
-FROM node:18-alpine
+FROM alpine:latest
 
-# Instalar Supabase CLI (método oficial)
-RUN npm install supabase@latest
+# Instalar dependencias necesarias
+RUN apk add --no-cache curl
+
+# Instalar Supabase CLI (binario oficial)
+RUN curl -fsSL https://supabase.com/install.sh | sh
 
 # Crear directorio para backups
 RUN mkdir -p /backups
