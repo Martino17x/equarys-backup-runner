@@ -2,9 +2,11 @@
 
 # Configuración
 BACKUP_DIR="/backups"
-SCHEMA_DIR="$BACKUP_DIR/schema"
-DATA_DIR="$BACKUP_DIR/data"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+BACKUP_DATE=$(date +%Y-%m-%d)
+TIMESTAMP=$(date +%H%M%S)
+DAY_DIR="$BACKUP_DIR/$BACKUP_DATE"
+SCHEMA_DIR="$DAY_DIR/schema"
+DATA_DIR="$DAY_DIR/data"
 RETENTION_DAYS=30
 SUPABASE_DB_URL="${SUPABASE_DB_URL:-}"
 
@@ -25,8 +27,6 @@ pg_dump "$SUPABASE_DB_URL" --schema-only --file "$SCHEMA_FILE"
 if [ -f "$SCHEMA_FILE" ]; then
     echo "Backup de schema completado: $SCHEMA_FILE"
     gzip "$SCHEMA_FILE"
-    find "$SCHEMA_DIR" -name "equarys_schema_*.sql.gz" -type f -mtime +$RETENTION_DAYS -delete
-    echo "Backups de schema antiguos eliminados (más de $RETENTION_DAYS días)"
 else
     echo "ERROR: El backup de schema no se creó"
     exit 1
@@ -39,12 +39,14 @@ pg_dump "$SUPABASE_DB_URL" --data-only --file "$DATA_FILE"
 if [ -f "$DATA_FILE" ]; then
     echo "Backup de datos completado: $DATA_FILE"
     gzip "$DATA_FILE"
-    find "$DATA_DIR" -name "equarys_data_*.sql.gz" -type f -mtime +$RETENTION_DAYS -delete
-    echo "Backups de datos antiguos eliminados (más de $RETENTION_DAYS días)"
 else
     echo "ERROR: El backup de datos no se creó"
     exit 1
 fi
+
+# Limpieza por carpetas diarias (más de RETENTION_DAYS)
+find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d -mtime +$RETENTION_DAYS -exec rm -rf {} +
+echo "Backups diarios antiguos eliminados (más de $RETENTION_DAYS días)"
 
 echo "=== Backup completo ==="
 echo "Schema: ${SCHEMA_FILE}.gz"
