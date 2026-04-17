@@ -2,6 +2,7 @@
 
 # Configuración
 BACKUP_DIR="/backups"
+LOCK_FILE="/tmp/backup.lock"
 BACKUP_DATE=$(date +%Y-%m-%d)
 TIMESTAMP=$(date +%H%M%S)
 DAY_DIR="$BACKUP_DIR/$BACKUP_DATE"
@@ -15,6 +16,14 @@ if [ -z "$SUPABASE_DB_URL" ]; then
     echo "ERROR: SUPABASE_DB_URL no está configurado"
     exit 1
 fi
+
+# Evitar ejecuciones simultáneas
+if [ -f "$LOCK_FILE" ]; then
+    echo "Backup en curso. Se omite esta ejecución."
+    exit 0
+fi
+touch "$LOCK_FILE"
+trap 'rm -f "$LOCK_FILE"' EXIT
 
 # Crear carpetas
 mkdir -p "$SCHEMA_DIR"
